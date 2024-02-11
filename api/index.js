@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 
 const userRoutes = require("./routes/users");
+const postRoutes = require("./routes/posts");
 const authRoutes = require("./routes/auth");
 
 // Make .env file data accessible
@@ -28,6 +29,7 @@ app.use(helmet());
 app.use(morgan("common"));
 
 app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
 app.use("/api/auth", authRoutes);
 
 app.listen("8800", () => {
