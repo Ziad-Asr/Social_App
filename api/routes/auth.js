@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 const User = require("../models/User");
 
-// Register
+// // Register
 router.post("/register", async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(12);
@@ -19,17 +19,13 @@ router.post("/register", async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.log(err);
-
-    res.status(500).json({
-      status: "error",
-      message: "Internal server error",
-    });
+    res.status(500).json(err);
   }
 });
 
 // Login
 router.post("/login", async (req, res) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
@@ -39,13 +35,22 @@ router.post("/login", async (req, res) => {
         status: "fail",
         message: "User not found",
       });
+
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    !validPassword &&
+      res.status(404).json({
+        status: "fail",
+        message: "Wrong password",
+      });
+
+    res.status(200).json({
+      user,
+    });
   } catch (err) {
     console.log(err);
 
-    res.status(500).json({
-      status: "error",
-      message: "Internal server error",
-    });
+    res.status(500).json(err);
   }
 });
 
